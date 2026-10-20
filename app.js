@@ -68,8 +68,8 @@
       if(location.protocol!=='https:' && location.hostname!=='localhost') { const e=new Error('HTTPS required');e.name='InsecureContextError';throw e; }
       if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw Object.assign(new Error('Camera API unavailable'),{name:'CameraUnavailableError'});
       if(!window.ZXingBrowser) throw new Error('ZXing library not loaded');
-      const hints = new Map(); hints.set(ZXingBrowser.DecodeHintType.POSSIBLE_FORMATS, SUPPORTED.map(k=>ZXingBrowser.BarcodeFormat[k]));
-      const reader = new ZXingBrowser.BrowserMultiFormatReader(hints);
+      const reader = new ZXingBrowser.BrowserMultiFormatReader();
+      reader.possibleFormats = SUPPORTED.map(k=>ZXingBrowser.BarcodeFormat[k]);
       scanning=true;
       controls = await reader.decodeFromConstraints({audio:false,video:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:720}}},els.video,(result,error)=>{
         if(result) addScan(result.getText(),result.getBarcodeFormat());
