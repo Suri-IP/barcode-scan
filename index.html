@@ -30,7 +30,7 @@
     </section>
 
     <section class="scanner-card" aria-label="เครื่องสแกนบาร์โค้ด">
-      <div class="card-heading"><div><span class="step">01</span><h2>สแกนด้วยกล้อง</h2></div><span class="live-pill" id="livePill"><i></i> พร้อมใช้งาน</span></div>
+      <div class="card-heading"><div><span class="step">01</span><h2>สแกนด้วยกล้อง</h2></div><span class="live-pill" id="livePill"><i></i><span id="liveText">พร้อมใช้งาน</span></span></div>
       <div class="camera-frame" id="cameraFrame">
         <video id="video" muted playsinline aria-label="ภาพจากกล้องสำหรับสแกนบาร์โค้ด"></video>
         <div class="camera-placeholder" id="cameraPlaceholder">
@@ -45,6 +45,10 @@
       <details class="camera-help hidden" id="cameraHelp">
         <summary>วิธีเปิดสิทธิ์กล้อง</summary>
         <div id="cameraHelpText">เปิดการตั้งค่าเว็บไซต์ของเบราว์เซอร์ แล้วตั้งค่า Camera เป็น Allow จากนั้นกลับมาโหลดหน้านี้ใหม่</div>
+      </details>
+      <details class="camera-help hidden" id="scanHelp">
+        <summary>เคล็ดลับให้กล้องอ่านได้ง่ายขึ้น</summary>
+        <div>เพิ่มแสงให้บาร์โค้ด ถือโทรศัพท์ให้นิ่งและขนานกับฉลาก ขยับเข้าออกเล็กน้อยให้เส้นคมชัด และจัดบาร์โค้ดให้อยู่กลางกรอบ หากฉลากยับหรือสะท้อนแสง ให้ลองเปลี่ยนมุม</div>
       </details>
       <button class="primary-button" id="startButton" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h4l2-3h4l2 3h4v12H4z"/><circle cx="12" cy="13" r="3.5"/></svg><span>เริ่มสแกน</span></button>
       <button class="stop-button hidden" id="stopButton" type="button">หยุดกล้อง</button>

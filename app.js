@@ -3,12 +3,15 @@
   const STORAGE_KEY = 'barcodetech-scanner-history-v1';
   const SUPPORTED = ['EAN_13', 'EAN_8', 'UPC_A', 'CODE_128'];
   const $ = (id) => document.getElementById(id);
-  const els = {video:$('video'),frame:$('cameraFrame'),placeholder:$('cameraPlaceholder'),cameraTitle:$('cameraTitle'),cameraMessage:$('cameraMessage'),status:$('cameraStatus'),help:$('cameraHelp'),helpText:$('cameraHelpText'),live:$('livePill'),start:$('startButton'),stop:$('stopButton'),result:$('resultValue'),type:$('resultType'),copy:$('copyButton'),copyFeedback:$('copyFeedback'),list:$('historyList'),empty:$('emptyHistory'),count:$('historyCount'),export:$('exportButton'),clear:$('clearButton'),form:$('checkForm'),input:$('manualInput'),validation:$('validationMessage'),verifyMode:$('verifyMode'),calculateMode:$('calculateMode')};
+  const els = {video:$('video'),frame:$('cameraFrame'),placeholder:$('cameraPlaceholder'),cameraTitle:$('cameraTitle'),cameraMessage:$('cameraMessage'),status:$('cameraStatus'),help:$('cameraHelp'),helpText:$('cameraHelpText'),scanHelp:$('scanHelp'),live:$('livePill'),liveText:$('liveText'),start:$('startButton'),stop:$('stopButton'),result:$('resultValue'),type:$('resultType'),copy:$('copyButton'),copyFeedback:$('copyFeedback'),list:$('historyList'),empty:$('emptyHistory'),count:$('historyCount'),export:$('exportButton'),clear:$('clearButton'),form:$('checkForm'),input:$('manualInput'),validation:$('validationMessage'),verifyMode:$('verifyMode'),calculateMode:$('calculateMode')};
   let history = readHistory();
   let controls = null;
   let scanning = false;
   let lastScan = {value:'', at:0};
   let checkMode = 'verify';
+  let scanTimeout = null;
+  let scanClock = null;
+  let scanStartedAt = 0;
 
   function readHistory() {
     try { const v = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); return Array.isArray(v) ? v.filter(x => x && typeof x.value === 'string' && typeof x.format === 'string' && Number.isFinite(x.timestamp)).slice(0,200) : []; }
@@ -46,9 +49,11 @@
     });
   }
   function stopCamera(message='หยุดกล้องแล้ว') {
+    clearTimeout(scanTimeout); clearInterval(scanClock); scanTimeout=null; scanClock=null;
     if (controls) { try { controls.stop(); } catch {} controls=null; }
     if (els.video.srcObject) { els.video.srcObject.getTracks().forEach(t=>t.stop()); els.video.srcObject=null; }
     scanning=false; els.frame.classList.remove('scanning'); els.live.classList.remove('active'); els.start.classList.remove('hidden'); els.stop.classList.add('hidden');
+    els.liveText.textContent='พร้อมใช้งาน';
     if(message) setStatus(message);
   }
   function cameraError(error) {
@@ -75,19 +80,24 @@
   }
   async function startCamera() {
     if(scanning)return;
-    els.frame.classList.remove('error'); els.start.disabled=true; els.start.querySelector('span').textContent='กำลังเปิดกล้อง…'; setStatus('กำลังขอสิทธิ์เข้าถึงกล้อง');
+    els.frame.classList.remove('error','timeout'); els.help.classList.add('hidden'); els.scanHelp.classList.add('hidden'); els.start.disabled=true; els.start.querySelector('span').textContent='กำลังเปิดกล้อง…'; setStatus('กำลังขอสิทธิ์เข้าถึงกล้อง');
+    els.cameraTitle.textContent='กำลังเปิดกล้อง'; els.cameraMessage.textContent='รอสักครู่';
     try {
       if(location.protocol!=='https:' && location.hostname!=='localhost') { const e=new Error('HTTPS required');e.name='InsecureContextError';throw e; }
       if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw Object.assign(new Error('Camera API unavailable'),{name:'CameraUnavailableError'});
       if(!window.ZXingBrowser) throw new Error('ZXing library not loaded');
-      const reader = new ZXingBrowser.BrowserMultiFormatReader();
+      const reader = new ZXingBrowser.BrowserMultiFormatReader(undefined,{delayBetweenScanAttempts:250,delayBetweenScanSuccess:250});
       reader.possibleFormats = SUPPORTED.map(k=>ZXingBrowser.BarcodeFormat[k]);
       scanning=true;
       controls = await reader.decodeFromConstraints({audio:false,video:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:720}}},els.video,(result,error)=>{
         if(result) addScan(result.getText(),result.getBarcodeFormat());
         // A not-found error is expected for video frames without a barcode.
       });
-      els.frame.classList.add('scanning'); els.live.classList.add('active'); els.start.classList.add('hidden'); els.stop.classList.remove('hidden'); setStatus('เล็งกล้องไปที่บาร์โค้ด');
+      els.frame.classList.add('scanning'); els.live.classList.add('active'); els.start.classList.add('hidden'); els.stop.classList.remove('hidden');
+      scanStartedAt=Date.now();
+      const updateScanClock=()=>{const seconds=Math.floor((Date.now()-scanStartedAt)/1000);els.liveText.textContent=`กำลังสแกน · ${String(Math.floor(seconds/60)).padStart(2,'0')}:${String(seconds%60).padStart(2,'0')}`;setStatus('เล็งกล้องไปที่บาร์โค้ด · กล้องจะหยุดเมื่ออ่านได้');};
+      updateScanClock(); scanClock=setInterval(updateScanClock,1000);
+      scanTimeout=setTimeout(()=>{if(!scanning)return;stopCamera('ยังอ่านบาร์โค้ดไม่เจอ · ปรับตำแหน่งหรือแสงแล้วลองอีกครั้ง');els.frame.classList.add('timeout');els.cameraTitle.textContent='ยังอ่านไม่เจอบาร์โค้ด';els.cameraMessage.textContent='ตรวจตำแหน่ง แสง และความคมชัด แล้วลองสแกนอีกครั้ง';els.scanHelp.classList.remove('hidden');},20000);
     } catch(error) { cameraError(error); }
     finally { els.start.disabled=false; els.start.querySelector('span').textContent='เริ่มสแกน'; }
   }
