@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#5A46AA">
   <meta name="description" content="สแกนบาร์โค้ดได้ง่าย รวดเร็ว และเป็นส่วนตัว โดย barcodetech (1999)">
-  <title>Barcode Scanner — barcodetech (1999)</title>
+  <title>ChuaiScan by Barcode Tech</title>
   <link rel="stylesheet" href="styles.css">
   <script defer src="https://unpkg.com/@zxing/browser@0.1.5"></script>
   <script defer src="app.js"></script>
@@ -14,7 +14,7 @@
   <header class="topbar">
     <a class="brand" href="#top" aria-label="barcodetech home">
       <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
-      <span><strong>barcodetech</strong><small>EST. 1999</small></span>
+      <span><strong>ChuaiScan</strong><small>by Barcode Tech</small></span>
     </a>
     <span class="private-label"><span class="privacy-dot"></span> สแกนบนอุปกรณ์ของคุณ</span>
   </header>
@@ -42,6 +42,10 @@
         <span class="camera-corner corner-tl"></span><span class="camera-corner corner-tr"></span><span class="camera-corner corner-bl"></span><span class="camera-corner corner-br"></span>
       </div>
       <div class="camera-status" id="cameraStatus" role="status" aria-live="polite">กล้องจะทำงานเมื่อคุณกดเริ่มสแกนเท่านั้น</div>
+      <details class="camera-help hidden" id="cameraHelp">
+        <summary>วิธีเปิดสิทธิ์กล้อง</summary>
+        <div id="cameraHelpText">เปิดการตั้งค่าเว็บไซต์ของเบราว์เซอร์ แล้วตั้งค่า Camera เป็น Allow จากนั้นกลับมาโหลดหน้านี้ใหม่</div>
+      </details>
       <button class="primary-button" id="startButton" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h4l2-3h4l2 3h4v12H4z"/><circle cx="12" cy="13" r="3.5"/></svg><span>เริ่มสแกน</span></button>
       <button class="stop-button hidden" id="stopButton" type="button">หยุดกล้อง</button>
       <p class="secure-note"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 7V5a4 4 0 0 1 8 0v2m-9 0h10v7H3z"/></svg> การใช้กล้องต้องเปิดเว็บผ่าน HTTPS และอนุญาตการเข้าถึงกล้อง</p>

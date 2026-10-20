@@ -3,7 +3,7 @@
   const STORAGE_KEY = 'barcodetech-scanner-history-v1';
   const SUPPORTED = ['EAN_13', 'EAN_8', 'UPC_A', 'CODE_128'];
   const $ = (id) => document.getElementById(id);
-  const els = {video:$('video'),frame:$('cameraFrame'),placeholder:$('cameraPlaceholder'),cameraTitle:$('cameraTitle'),cameraMessage:$('cameraMessage'),status:$('cameraStatus'),live:$('livePill'),start:$('startButton'),stop:$('stopButton'),result:$('resultValue'),type:$('resultType'),copy:$('copyButton'),copyFeedback:$('copyFeedback'),list:$('historyList'),empty:$('emptyHistory'),count:$('historyCount'),export:$('exportButton'),clear:$('clearButton'),form:$('checkForm'),input:$('manualInput'),validation:$('validationMessage')};
+  const els = {video:$('video'),frame:$('cameraFrame'),placeholder:$('cameraPlaceholder'),cameraTitle:$('cameraTitle'),cameraMessage:$('cameraMessage'),status:$('cameraStatus'),help:$('cameraHelp'),helpText:$('cameraHelpText'),live:$('livePill'),start:$('startButton'),stop:$('stopButton'),result:$('resultValue'),type:$('resultType'),copy:$('copyButton'),copyFeedback:$('copyFeedback'),list:$('historyList'),empty:$('emptyHistory'),count:$('historyCount'),export:$('exportButton'),clear:$('clearButton'),form:$('checkForm'),input:$('manualInput'),validation:$('validationMessage')};
   let history = readHistory();
   let controls = null;
   let scanning = false;
@@ -53,12 +53,23 @@
   function cameraError(error) {
     stopCamera('ไม่สามารถเปิดกล้องได้'); els.frame.classList.add('error');
     let title='เปิดกล้องไม่สำเร็จ', msg='โปรดลองอีกครั้ง หรือตรวจสอบการตั้งค่ากล้อง';
+    els.help.classList.add('hidden');
     if(location.protocol!=='https:' && location.hostname!=='localhost') { title='ต้องใช้การเชื่อมต่อ HTTPS'; msg='เปิดเว็บไซต์ผ่าน HTTPS เพื่อใช้กล้อง'; }
     else if(error && error.name==='CameraUnavailableError') { title='เบราว์เซอร์นี้ใช้กล้องไม่ได้'; msg='ลองเปิดด้วย Safari หรือ Chrome เวอร์ชันล่าสุด'; }
-    else if(error && (error.name==='NotAllowedError'||error.name==='PermissionDeniedError')) { title='ยังไม่ได้รับอนุญาตใช้กล้อง'; msg='อนุญาต Camera ในการตั้งค่าเบราว์เซอร์ แล้วลองอีกครั้ง'; }
+    else if(error && (error.name==='NotAllowedError'||error.name==='PermissionDeniedError')) {
+      title='เบราว์เซอร์ยังบล็อกกล้องอยู่'; msg='เปิดสิทธิ์กล้องในการตั้งค่าเว็บไซต์ แล้วกลับมาลองอีกครั้ง';
+      els.help.classList.remove('hidden');
+      const ua=navigator.userAgent||'';
+      if(/iPhone|iPad|iPod/i.test(ua) && /CriOS/i.test(ua)) els.helpText.textContent='เปิดแอป Settings ใน iPhone > Chrome > Camera แล้วเลือก Allow จากนั้นกลับมา Chrome และโหลดหน้านี้ใหม่';
+      else if(/iPhone|iPad|iPod/i.test(ua)) els.helpText.textContent='ใน Safari แตะปุ่ม aA ข้างแถบที่อยู่ > Website Settings > Camera > Allow แล้วโหลดหน้านี้ใหม่ หากไม่พบ ให้เปิด Settings > Apps > Safari > Camera';
+      else if(/Android/i.test(ua) && /SamsungBrowser/i.test(ua)) els.helpText.textContent='แตะไอคอนกุญแจหรือเมนูข้างแถบที่อยู่ > Permissions > Camera > Allow แล้วโหลดหน้านี้ใหม่';
+      else if(/Android/i.test(ua)) els.helpText.textContent='แตะไอคอนตั้งค่า/กุญแจข้างแถบที่อยู่ > Permissions > Camera > Allow แล้วโหลดหน้านี้ใหม่ หากยังไม่ได้ ให้เปิด Chrome > Settings > Site settings > Camera';
+      else els.helpText.textContent='คลิกไอคอนตั้งค่าเว็บไซต์ทางซ้ายของแถบที่อยู่ > Camera > Allow แล้วโหลดหน้านี้ใหม่';
+    }
     else if(error && (error.name==='NotFoundError'||error.name==='DevicesNotFoundError')) { title='ไม่พบกล้อง'; msg='เชื่อมต่อกล้องหรือใช้โทรศัพท์ที่มีกล้อง'; }
     else if(error && error.name==='NotReadableError') { title='กล้องกำลังถูกใช้งาน'; msg='ปิดแอปอื่นที่ใช้กล้องแล้วลองอีกครั้ง'; }
     else if(!window.ZXingBrowser) { title='โหลดเครื่องสแกนไม่สำเร็จ'; msg='ตรวจสอบอินเทอร์เน็ตแล้วรีเฟรชหน้านี้'; }
+    if(error) console.error('Barcode scanner could not start:', error.name, error.message);
     els.cameraTitle.textContent=title; els.cameraMessage.textContent=msg; els.frame.classList.add('error'); setStatus(msg);
   }
   async function startCamera() {
@@ -73,7 +84,7 @@
       scanning=true;
       controls = await reader.decodeFromConstraints({audio:false,video:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:720}}},els.video,(result,error)=>{
         if(result) addScan(result.getText(),result.getBarcodeFormat());
-        else if(error && !(error instanceof ZXingBrowser.NotFoundException) && error.name!=='NotFoundException') { /* No barcode in this frame is expected while scanning. */ }
+        // A not-found error is expected for video frames without a barcode.
       });
       els.frame.classList.add('scanning'); els.live.classList.add('active'); els.start.classList.add('hidden'); els.stop.classList.remove('hidden'); setStatus('เล็งกล้องไปที่บาร์โค้ด');
     } catch(error) { cameraError(error); }
