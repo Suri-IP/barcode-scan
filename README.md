@@ -40,6 +40,7 @@ CSV cells are quoted and escaped, and barcode values are kept as text so leading
 - [ ] Clear all history and confirm the empty state returns.
 - [ ] Check valid examples: `4006381333931` (EAN-13), `96385074` (EAN-8), `036000291452` (UPC-A).
 - [ ] Check invalid check digits, non-numeric input, and unsupported input lengths.
+- [ ] Switch to check-digit calculation and try `400638133393` (EAN-13 base), `9638507` (EAN-8 base), and `03600029145` (UPC-A base); verify the completed codes are shown.
 - [ ] Deny camera permission and confirm the helpful permission state appears.
 - [ ] Open on a non-HTTPS host (other than localhost) and confirm the HTTPS requirement appears.
 - [ ] Turn off the network before loading to confirm the external ZXing dependency is unavailable and the error state is helpful.

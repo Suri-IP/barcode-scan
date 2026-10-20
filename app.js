@@ -3,11 +3,12 @@
   const STORAGE_KEY = 'barcodetech-scanner-history-v1';
   const SUPPORTED = ['EAN_13', 'EAN_8', 'UPC_A', 'CODE_128'];
   const $ = (id) => document.getElementById(id);
-  const els = {video:$('video'),frame:$('cameraFrame'),placeholder:$('cameraPlaceholder'),cameraTitle:$('cameraTitle'),cameraMessage:$('cameraMessage'),status:$('cameraStatus'),help:$('cameraHelp'),helpText:$('cameraHelpText'),live:$('livePill'),start:$('startButton'),stop:$('stopButton'),result:$('resultValue'),type:$('resultType'),copy:$('copyButton'),copyFeedback:$('copyFeedback'),list:$('historyList'),empty:$('emptyHistory'),count:$('historyCount'),export:$('exportButton'),clear:$('clearButton'),form:$('checkForm'),input:$('manualInput'),validation:$('validationMessage')};
+  const els = {video:$('video'),frame:$('cameraFrame'),placeholder:$('cameraPlaceholder'),cameraTitle:$('cameraTitle'),cameraMessage:$('cameraMessage'),status:$('cameraStatus'),help:$('cameraHelp'),helpText:$('cameraHelpText'),live:$('livePill'),start:$('startButton'),stop:$('stopButton'),result:$('resultValue'),type:$('resultType'),copy:$('copyButton'),copyFeedback:$('copyFeedback'),list:$('historyList'),empty:$('emptyHistory'),count:$('historyCount'),export:$('exportButton'),clear:$('clearButton'),form:$('checkForm'),input:$('manualInput'),validation:$('validationMessage'),verifyMode:$('verifyMode'),calculateMode:$('calculateMode')};
   let history = readHistory();
   let controls = null;
   let scanning = false;
   let lastScan = {value:'', at:0};
+  let checkMode = 'verify';
 
   function readHistory() {
     try { const v = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); return Array.isArray(v) ? v.filter(x => x && typeof x.value === 'string' && typeof x.format === 'string' && Number.isFinite(x.timestamp)).slice(0,200) : []; }
@@ -27,7 +28,7 @@
     lastScan = {value,at:now};
     const item = {value, format:formatName(format), timestamp:now};
     history.unshift(item); history = history.slice(0,200); saveHistory(); renderHistory(); showResult(value,item.format);
-    setStatus('อ่านบาร์โค้ดสำเร็จ · กล้องยังทำงานอยู่');
+    stopCamera('อ่านบาร์โค้ดสำเร็จ · หยุดกล้องอัตโนมัติ');
     if (navigator.vibrate) navigator.vibrate(45);
   }
   function showResult(value, format) { els.result.textContent=value; els.result.classList.add('has-value'); els.type.textContent=format; els.copy.disabled=false; els.copyFeedback.textContent=''; }
@@ -90,14 +91,25 @@
     } catch(error) { cameraError(error); }
     finally { els.start.disabled=false; els.start.querySelector('span').textContent='เริ่มสแกน'; }
   }
-  function checkDigit(code) {
-    if(!/^\d+$/.test(code))return {valid:false,message:'กรุณากรอกตัวเลขเท่านั้น'};
-    const expectedLength=code.length===8?8:code.length===12?12:code.length===13?13:0;
-    if(!expectedLength)return {valid:false,message:'กรุณากรอก 8, 12 หรือ 13 หลัก'};
-    const digits=code.split('').map(Number), check=digits.pop();
+  function expectedCheckDigit(data) {
+    const digits=data.split('').map(Number);
     const sum=digits.reduce((total,digit,index)=>total+digit*((digits.length-index)%2===1?3:1),0);
-    const expected=(10-(sum%10))%10;
-    return check===expected?{valid:true,message:`ถูกต้อง · Check Digit คือ ${expected}`}:{valid:false,message:`ไม่ถูกต้อง · ควรลงท้ายด้วย ${expected}`};
+    return (10-(sum%10))%10;
+  }
+  function checkDigit(code, mode) {
+    if(!/^\d+$/.test(code))return {valid:false,message:'กรุณากรอกตัวเลขเท่านั้น'};
+    if(mode==='calculate') {
+      const formats={7:'EAN-8',11:'UPC-A',12:'EAN-13'};
+      if(!formats[code.length])return {valid:false,message:'โหมดคำนวณใช้เลขฐาน 7, 11 หรือ 12 หลัก'};
+      const digit=expectedCheckDigit(code);
+      return {valid:true,message:`เลขท้ายที่คำนวณได้คือ ${digit} · รหัสเต็ม ${code}${digit} (${formats[code.length]})`};
+    }
+    const expectedLength=code.length===8?8:code.length===12?12:code.length===13?13:0;
+    if(!expectedLength)return {valid:false,message:'โหมดตรวจสอบใช้บาร์โค้ดเต็ม 8, 12 หรือ 13 หลัก'};
+    const expected=expectedCheckDigit(code.slice(0,-1));
+    return Number(code.at(-1))===expected
+      ?{valid:true,message:`เลขครบและ Check Digit ตรงตามสูตร (${expected})`}
+      :{valid:false,message:`Check Digit ไม่ตรง · ควรเป็น ${expected} · รหัสตามสูตร ${code.slice(0,-1)}${expected}`};
   }
   function csvCell(value) { return '"'+String(value).replace(/"/g,'""')+'"'; }
   function exportCsv() {
@@ -107,8 +119,19 @@
   }
   els.start.addEventListener('click',startCamera); els.stop.addEventListener('click',()=>stopCamera());
   els.copy.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(els.result.textContent);els.copyFeedback.textContent='คัดลอกแล้ว';}catch{els.copyFeedback.textContent='คัดลอกไม่สำเร็จ · เลือกข้อความเพื่อคัดลอก';}});
-  els.form.addEventListener('submit',event=>{event.preventDefault();const result=checkDigit(els.input.value.trim());els.validation.textContent=result.message;els.validation.className=`validation-message ${result.valid?'valid':'invalid'}`;});
-  els.input.addEventListener('input',()=>{els.validation.textContent='รองรับตัวเลข 8, 12 หรือ 13 หลัก';els.validation.className='validation-message';});
+  function setCheckMode(mode) {
+    checkMode=mode;
+    const verifying=mode==='verify';
+    els.verifyMode.classList.toggle('selected',verifying); els.verifyMode.setAttribute('aria-pressed',String(verifying));
+    els.calculateMode.classList.toggle('selected',!verifying); els.calculateMode.setAttribute('aria-pressed',String(!verifying));
+    els.input.placeholder=verifying?'กรอกเลขบาร์โค้ดเต็ม':'กรอกเลขฐานที่ยังไม่มีเลขท้าย';
+    els.validation.textContent=verifying?'รองรับเลขเต็ม 8, 12 หรือ 13 หลัก':'ใส่เลขฐาน 7 หลัก (EAN-8), 11 หลัก (UPC-A) หรือ 12 หลัก (EAN-13)';
+    els.validation.className='validation-message';
+  }
+  els.verifyMode.addEventListener('click',()=>setCheckMode('verify'));
+  els.calculateMode.addEventListener('click',()=>setCheckMode('calculate'));
+  els.form.addEventListener('submit',event=>{event.preventDefault();const result=checkDigit(els.input.value.trim(),checkMode);els.validation.textContent=result.message;els.validation.className=`validation-message ${result.valid?'valid':'invalid'}`;});
+  els.input.addEventListener('input',()=>{els.validation.textContent=checkMode==='verify'?'รองรับเลขเต็ม 8, 12 หรือ 13 หลัก':'ใส่เลขฐาน 7, 11 หรือ 12 หลัก';els.validation.className='validation-message';});
   els.clear.addEventListener('click',()=>{if(!history.length)return;history=[];saveHistory();renderHistory();}); els.export.addEventListener('click',exportCsv);
   window.addEventListener('pagehide',()=>stopCamera(''));
   renderHistory();

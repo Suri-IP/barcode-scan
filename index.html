@@ -59,10 +59,14 @@
 
     <section class="manual-card" aria-labelledby="manual-heading">
       <div class="card-heading"><div><span class="step">03</span><h2 id="manual-heading">ตรวจสอบ Check Digit</h2></div><span class="result-type">EAN / UPC</span></div>
-      <p class="section-copy">กรอกเลขบาร์โค้ดเพื่อตรวจสอบหลักตรวจสอบท้ายสุด</p>
+      <p class="section-copy">Check Digit ช่วยจับเลขพิมพ์ผิด แต่ไม่ได้ยืนยันว่ารหัสมีสินค้าอยู่จริง</p>
+      <div class="check-modes" role="group" aria-label="เลือกวิธีตรวจ Check Digit">
+        <button type="button" id="verifyMode" class="mode-button selected" aria-pressed="true">ตรวจสอบเลขเต็ม</button>
+        <button type="button" id="calculateMode" class="mode-button" aria-pressed="false">คำนวณเลขท้าย</button>
+      </div>
       <form class="manual-form" id="checkForm" novalidate>
-        <label class="sr-only" for="manualInput">หมายเลข EAN-13, EAN-8 หรือ UPC-A</label>
-        <input id="manualInput" name="barcode" type="text" inputmode="numeric" autocomplete="off" placeholder="เช่น 8850123456789" maxlength="13" aria-describedby="validationMessage">
+        <label class="sr-only" for="manualInput">หมายเลข EAN หรือ UPC</label>
+        <input id="manualInput" name="barcode" type="text" inputmode="numeric" autocomplete="off" placeholder="กรอกเลขบาร์โค้ดเต็ม" maxlength="13" aria-describedby="validationMessage">
         <button type="submit">ตรวจสอบ</button>
       </form>
       <div class="validation-message" id="validationMessage" role="status" aria-live="polite">รองรับตัวเลข 8, 12 หรือ 13 หลัก</div>

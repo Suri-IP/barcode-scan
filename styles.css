@@ -4,3 +4,5 @@
 .camera-help{margin:0 0 10px;padding:10px 11px;border:1px solid #e7e3f2;border-radius:6px;background:#faf9fd;color:#6c6680;font-size:10px;line-height:1.7}.camera-help summary{color:var(--purple);font-weight:600;cursor:pointer}.camera-help div{padding-top:7px}
 
 .brand strong{line-height:1}.brand small{letter-spacing:1.2px;line-height:1;display:block;margin-top:2px}
+
+.check-modes{display:flex;gap:6px;margin:0 0 9px}.mode-button{flex:1;min-height:31px;border:1px solid #e5e3eb;border-radius:5px;background:#fff;color:#777688;font:500 10px 'IBM Plex Sans Thai',sans-serif;cursor:pointer}.mode-button.selected{border-color:#d8d2eb;background:var(--purple-pale);color:var(--purple);font-weight:600}
