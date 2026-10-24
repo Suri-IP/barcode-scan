@@ -13,28 +13,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#5A46AA">
   <meta name="description" content="สแกนบาร์โค้ดได้ง่าย รวดเร็ว และเป็นส่วนตัว โดย barcodetech (1999)">
-  <title>ChuaiScan by Barcode Tech · กล้องเต็มจอ</title>
-  <link rel="stylesheet" href="styles.css">
-  <style>
-    body.fullscreen-scanning{overflow:hidden;background:#111}
-    body.fullscreen-scanning .topbar,body.fullscreen-scanning footer{display:none}
-    body.fullscreen-scanning .layout{position:fixed;inset:0;z-index:10000;width:100%;height:100vh;height:100dvh;margin:0;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);display:block;background:#111}
-    body.fullscreen-scanning .layout>section:not(.scanner-card){display:none}
-    body.fullscreen-scanning .scanner-card{position:absolute;inset:0;height:100%;padding:10px 14px 12px;border:0;border-radius:0;background:#17161f;color:#fff;box-shadow:none;display:flex;flex-direction:column;gap:0}
-    body.fullscreen-scanning .card-heading h2{color:#fff}
-    body.fullscreen-scanning .live-pill{color:#ddd9ec}
-    body.fullscreen-scanning .camera-frame{flex:1;min-height:0;height:auto;background:#050505;border-radius:10px}
-    body.fullscreen-scanning .camera-frame video{object-fit:cover}
-    body.fullscreen-scanning .camera-status{height:auto;min-height:38px;padding:10px 2px;color:#eeedf4;font-size:13px}
-    body.fullscreen-scanning .pre-scan-tip,body.fullscreen-scanning .secure-note,body.fullscreen-scanning .camera-help,body.fullscreen-scanning #startButton{display:none!important}
-    body.fullscreen-scanning .stop-button{flex:none;height:48px;margin:0;border-color:#55525f;background:#292833;color:#fff;font-size:14px}
-    body.fullscreen-scanning .scan-overlay{inset:30% 5%;border-color:rgba(255,255,255,.95)}
-    body.fullscreen-scanning .camera-corner{width:19px;height:19px;border-width:3px}
-    body.fullscreen-scanning .corner-tl{top:30%;left:5%}body.fullscreen-scanning .corner-tr{top:30%;right:5%}body.fullscreen-scanning .corner-bl{bottom:30%;left:5%}body.fullscreen-scanning .corner-br{bottom:30%;right:5%}
-    @media(min-width:701px){body.fullscreen-scanning .scanner-card{width:min(760px,100%);left:50%;transform:translateX(-50%);border-radius:14px}body.fullscreen-scanning .camera-frame{max-height:calc(100dvh - 130px)}}
-  </style>
+  <title>ChuaiScan by Barcode Tech</title>
+  <link rel="stylesheet" href="styles.css?v=20261024-popup">
   <script defer src="https://unpkg.com/@zxing/browser@0.1.5"></script>
-  <script defer src="app.js"></script>
+  <script defer src="app.js?v=20261024-popup"></script>
 </head>
 <body>
   <header class="topbar">
@@ -118,12 +100,5 @@
     <p class="dialog-barcode" id="dialogResultValue"></p>
     <div class="dialog-actions"><button class="dialog-close" id="closeResultDialog" type="button">ปิด</button><button class="dialog-rescan" id="rescanButton" type="button">สแกนอีกครั้ง</button></div>
   </dialog>
-  <script>
-    const cameraFrame = document.getElementById('cameraFrame');
-    const fullscreenObserver = new MutationObserver(() => {
-      document.body.classList.toggle('fullscreen-scanning', cameraFrame.classList.contains('scanning'));
-    });
-    fullscreenObserver.observe(cameraFrame, {attributes:true, attributeFilter:['class']});
-  </script>
 </body>
 </html>

@@ -34,7 +34,7 @@
     stopCamera('อ่านบาร์โค้ดสำเร็จ · หยุดกล้องอัตโนมัติ');
     if (navigator.vibrate) navigator.vibrate(45);
   }
-  function showResult(value, format) { els.result.textContent=value; els.result.classList.add('has-value'); els.type.textContent=format; els.type.classList.remove('type-flash'); void els.type.offsetWidth; els.type.classList.add('type-flash'); els.copy.disabled=false; els.copyFeedback.textContent=''; els.dialogType.textContent=format; els.dialogType.classList.remove('type-flash'); void els.dialogType.offsetWidth; els.dialogType.classList.add('type-flash'); els.dialogValue.textContent=value; if(!els.dialog.open)els.dialog.showModal(); }
+  function showResult(value, format) { els.result.textContent=value; els.result.classList.add('has-value'); els.type.textContent=format; els.type.classList.remove('type-flash'); void els.type.offsetWidth; els.type.classList.add('type-flash'); els.copy.disabled=false; els.copyFeedback.textContent=''; if(els.dialog&&els.dialogType&&els.dialogValue&&typeof els.dialog.showModal==='function'){els.dialogType.textContent=format;els.dialogType.classList.remove('type-flash');void els.dialogType.offsetWidth;els.dialogType.classList.add('type-flash');els.dialogValue.textContent=value;if(!els.dialog.open)els.dialog.showModal();}else{document.getElementById('result-heading')?.scrollIntoView({behavior:'smooth',block:'center'});} }
   function setStatus(message) { els.status.textContent=message; }
   function renderHistory() {
     els.list.replaceChildren(); els.count.textContent=String(history.length); els.empty.classList.toggle('hidden',history.length>0); els.export.disabled=history.length===0; els.clear.disabled=history.length===0;
@@ -129,8 +129,8 @@
     const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'})); const a=document.createElement('a'); a.href=url;a.download=`barcodetech-scans-${new Date().toISOString().slice(0,10)}.csv`;document.body.append(a);a.click();a.remove();URL.revokeObjectURL(url);
   }
   els.start.addEventListener('click',startCamera); els.stop.addEventListener('click',()=>stopCamera());
-  els.dialogClose.addEventListener('click',()=>els.dialog.close());
-  els.rescan.addEventListener('click',()=>{els.dialog.close();startCamera();});
+  if(els.dialogClose&&els.dialog)els.dialogClose.addEventListener('click',()=>els.dialog.close());
+  if(els.rescan&&els.dialog)els.rescan.addEventListener('click',()=>{els.dialog.close();startCamera();});
   els.copy.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(els.result.textContent);els.copyFeedback.textContent='คัดลอกแล้ว';}catch{els.copyFeedback.textContent='คัดลอกไม่สำเร็จ · เลือกข้อความเพื่อคัดลอก';}});
   function setCheckMode(mode) {
     checkMode=mode;
