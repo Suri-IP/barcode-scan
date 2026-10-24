@@ -112,6 +112,12 @@
   </main>
 
   <footer><span class="footer-brand">“ช่วยสแกน” <small>by</small> <b>Barcode Tech (1999)</b></span><span>เครื่องมือสแกนบาร์โค้ดที่ใช้งานง่ายและเป็นส่วนตัว</span></footer>
+  <dialog class="scan-result-dialog" id="scanResultDialog" aria-labelledby="scanDialogTitle">
+    <h2 id="scanDialogTitle">สแกนสำเร็จ</h2>
+    <span class="result-type" id="dialogResultType"></span>
+    <p class="dialog-barcode" id="dialogResultValue"></p>
+    <div class="dialog-actions"><button class="dialog-close" id="closeResultDialog" type="button">ปิด</button><button class="dialog-rescan" id="rescanButton" type="button">สแกนอีกครั้ง</button></div>
+  </dialog>
   <script>
     const cameraFrame = document.getElementById('cameraFrame');
     const fullscreenObserver = new MutationObserver(() => {
