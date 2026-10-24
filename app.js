@@ -3,7 +3,7 @@
   const STORAGE_KEY = 'barcodetech-scanner-history-v1';
   const SUPPORTED = ['EAN_13', 'EAN_8', 'UPC_A', 'CODE_128'];
   const $ = (id) => document.getElementById(id);
-  const els = {video:$('video'),frame:$('cameraFrame'),placeholder:$('cameraPlaceholder'),cameraTitle:$('cameraTitle'),cameraMessage:$('cameraMessage'),status:$('cameraStatus'),preScanTip:$('preScanTip'),help:$('cameraHelp'),helpText:$('cameraHelpText'),scanHelp:$('scanHelp'),live:$('livePill'),liveText:$('liveText'),start:$('startButton'),stop:$('stopButton'),result:$('resultValue'),type:$('resultType'),copy:$('copyButton'),copyFeedback:$('copyFeedback'),list:$('historyList'),empty:$('emptyHistory'),count:$('historyCount'),export:$('exportButton'),clear:$('clearButton'),form:$('checkForm'),input:$('manualInput'),validation:$('validationMessage'),verifyMode:$('verifyMode'),calculateMode:$('calculateMode')};
+  const els = {video:$('video'),frame:$('cameraFrame'),placeholder:$('cameraPlaceholder'),cameraTitle:$('cameraTitle'),cameraMessage:$('cameraMessage'),status:$('cameraStatus'),preScanTip:$('preScanTip'),help:$('cameraHelp'),helpText:$('cameraHelpText'),scanHelp:$('scanHelp'),live:$('livePill'),liveText:$('liveText'),start:$('startButton'),stop:$('stopButton'),result:$('resultValue'),type:$('resultType'),copy:$('copyButton'),copyFeedback:$('copyFeedback'),list:$('historyList'),empty:$('emptyHistory'),count:$('historyCount'),export:$('exportButton'),clear:$('clearButton'),form:$('checkForm'),input:$('manualInput'),validation:$('validationMessage'),verifyMode:$('verifyMode'),calculateMode:$('calculateMode'),dialog:$('scanResultDialog'),dialogType:$('dialogResultType'),dialogValue:$('dialogResultValue'),dialogClose:$('closeResultDialog'),rescan:$('rescanButton')};
   let history = readHistory();
   let controls = null;
   let scanning = false;
@@ -34,7 +34,7 @@
     stopCamera('อ่านบาร์โค้ดสำเร็จ · หยุดกล้องอัตโนมัติ');
     if (navigator.vibrate) navigator.vibrate(45);
   }
-  function showResult(value, format) { els.result.textContent=value; els.result.classList.add('has-value'); els.type.textContent=format; els.type.classList.remove('type-flash'); void els.type.offsetWidth; els.type.classList.add('type-flash'); els.copy.disabled=false; els.copyFeedback.textContent=''; }
+  function showResult(value, format) { els.result.textContent=value; els.result.classList.add('has-value'); els.type.textContent=format; els.type.classList.remove('type-flash'); void els.type.offsetWidth; els.type.classList.add('type-flash'); els.copy.disabled=false; els.copyFeedback.textContent=''; els.dialogType.textContent=format; els.dialogType.classList.remove('type-flash'); void els.dialogType.offsetWidth; els.dialogType.classList.add('type-flash'); els.dialogValue.textContent=value; if(!els.dialog.open)els.dialog.showModal(); }
   function setStatus(message) { els.status.textContent=message; }
   function renderHistory() {
     els.list.replaceChildren(); els.count.textContent=String(history.length); els.empty.classList.toggle('hidden',history.length>0); els.export.disabled=history.length===0; els.clear.disabled=history.length===0;
@@ -129,6 +129,8 @@
     const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'})); const a=document.createElement('a'); a.href=url;a.download=`barcodetech-scans-${new Date().toISOString().slice(0,10)}.csv`;document.body.append(a);a.click();a.remove();URL.revokeObjectURL(url);
   }
   els.start.addEventListener('click',startCamera); els.stop.addEventListener('click',()=>stopCamera());
+  els.dialogClose.addEventListener('click',()=>els.dialog.close());
+  els.rescan.addEventListener('click',()=>{els.dialog.close();startCamera();});
   els.copy.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(els.result.textContent);els.copyFeedback.textContent='คัดลอกแล้ว';}catch{els.copyFeedback.textContent='คัดลอกไม่สำเร็จ · เลือกข้อความเพื่อคัดลอก';}});
   function setCheckMode(mode) {
     checkMode=mode;
