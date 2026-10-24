@@ -14,9 +14,9 @@
   <meta name="theme-color" content="#5A46AA">
   <meta name="description" content="สแกนบาร์โค้ดได้ง่าย รวดเร็ว และเป็นส่วนตัว โดย barcodetech (1999)">
   <title>ChuaiScan by Barcode Tech</title>
-  <link rel="stylesheet" href="styles.css?v=20261024-popup">
+  <link rel="stylesheet" href="styles.css?v=20261024-about-ui">
   <script defer src="https://unpkg.com/@zxing/browser@0.1.5"></script>
-  <script defer src="app.js?v=20261024-popup"></script>
+  <script defer src="app.js?v=20261024-about-ui"></script>
 </head>
 <body>
   <header class="topbar">
@@ -99,6 +99,16 @@
     <span class="result-type" id="dialogResultType"></span>
     <p class="dialog-barcode" id="dialogResultValue"></p>
     <div class="dialog-actions"><button class="dialog-close" id="closeResultDialog" type="button">ปิด</button><button class="dialog-rescan" id="rescanButton" type="button">สแกนอีกครั้ง</button></div>
+  </dialog>
+  <dialog class="scan-result-dialog about-dialog" id="aboutDialog" aria-labelledby="aboutDialogTitle">
+    <h2 id="aboutDialogTitle">เกี่ยวกับเรา</h2>
+    <p>เว็บไซต์นี้พัฒนาขึ้นเพื่อเป็นเครื่องมือสำหรับตรวจสอบบาร์โค้ดเบื้องต้นได้อย่างสะดวกและรวดเร็ว ได้ด้วยตัวเอง ก่อนนำไปใช้งานจริง</p>
+    <p>โดยเราพยายามออกแบบระบบสแกนให้มีลักษณะใกล้เคียงกับการใช้งานเครื่องสแกนบาร์โค้ด (เครื่องยิงบาร์โค้ด) เราจึงตั้งใจเลือกให้มีเฉพาะระบบสแกนผ่านกล้อง เพื่อให้สามารถสแกนบาร์โค้ดได้โดยตรง</p>
+    <p>เว็บไซต์นี้เปิดให้ใช้งานฟรี โดยไม่ต้องลงทะเบียน</p>
+    <hr>
+    <h3>พัฒนาโดย Barcode Tech (1999)</h3>
+    <p>ผู้ให้บริการด้านบาร์โค้ด ฉลากสินค้า ฉลาก สคบ. สติกเกอร์คลังสินค้า และงานพิมพ์ที่เกี่ยวข้อง</p>
+    <div class="about-actions"><a class="company-website-link" href="https://barcodetech1999.com/" target="_blank" rel="noopener noreferrer">เยี่ยมชมเว็บไซต์บริษัท <span aria-hidden="true">↗</span></a><button class="dialog-close" id="closeAboutDialog" type="button">ปิด</button></div>
   </dialog>
 </body>
 </html>

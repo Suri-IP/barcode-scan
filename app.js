@@ -149,9 +149,15 @@
   window.addEventListener('pagehide',()=>stopCamera(''));
   document.querySelectorAll('.site-menu').forEach(menu=>{
     menu.querySelectorAll('[data-menu-page]').forEach(button=>button.addEventListener('click',()=>{
-      menu.querySelector('.menu-notice').textContent=`${button.dataset.menuPage} · อยู่ระหว่างดำเนินการ`;
+      if(button.dataset.menuPage==='เกี่ยวกับเรา'&&$('aboutDialog')){
+        menu.open=false;
+        $('aboutDialog').showModal();
+      }else{
+        menu.querySelector('.menu-notice').textContent=`${button.dataset.menuPage} · อยู่ระหว่างดำเนินการ`;
+      }
     }));
     document.addEventListener('click',event=>{if(!menu.contains(event.target))menu.open=false;});
   });
+  $('closeAboutDialog')?.addEventListener('click',()=>$('aboutDialog').close());
   renderHistory();
 })();
