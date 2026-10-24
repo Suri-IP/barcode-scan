@@ -3,7 +3,7 @@
   const STORAGE_KEY = 'barcodetech-scanner-history-v1';
   const SUPPORTED = ['EAN_13', 'EAN_8', 'UPC_A', 'CODE_128'];
   const $ = (id) => document.getElementById(id);
-  const els = {video:$('video'),frame:$('cameraFrame'),placeholder:$('cameraPlaceholder'),cameraTitle:$('cameraTitle'),cameraMessage:$('cameraMessage'),status:$('cameraStatus'),help:$('cameraHelp'),helpText:$('cameraHelpText'),scanHelp:$('scanHelp'),live:$('livePill'),liveText:$('liveText'),start:$('startButton'),stop:$('stopButton'),result:$('resultValue'),type:$('resultType'),copy:$('copyButton'),copyFeedback:$('copyFeedback'),list:$('historyList'),empty:$('emptyHistory'),count:$('historyCount'),export:$('exportButton'),clear:$('clearButton'),form:$('checkForm'),input:$('manualInput'),validation:$('validationMessage'),verifyMode:$('verifyMode'),calculateMode:$('calculateMode')};
+  const els = {video:$('video'),frame:$('cameraFrame'),placeholder:$('cameraPlaceholder'),cameraTitle:$('cameraTitle'),cameraMessage:$('cameraMessage'),status:$('cameraStatus'),preScanTip:$('preScanTip'),help:$('cameraHelp'),helpText:$('cameraHelpText'),scanHelp:$('scanHelp'),live:$('livePill'),liveText:$('liveText'),start:$('startButton'),stop:$('stopButton'),result:$('resultValue'),type:$('resultType'),copy:$('copyButton'),copyFeedback:$('copyFeedback'),list:$('historyList'),empty:$('emptyHistory'),count:$('historyCount'),export:$('exportButton'),clear:$('clearButton'),form:$('checkForm'),input:$('manualInput'),validation:$('validationMessage'),verifyMode:$('verifyMode'),calculateMode:$('calculateMode')};
   let history = readHistory();
   let controls = null;
   let scanning = false;
@@ -34,7 +34,7 @@
     stopCamera('อ่านบาร์โค้ดสำเร็จ · หยุดกล้องอัตโนมัติ');
     if (navigator.vibrate) navigator.vibrate(45);
   }
-  function showResult(value, format) { els.result.textContent=value; els.result.classList.add('has-value'); els.type.textContent=format; els.copy.disabled=false; els.copyFeedback.textContent=''; }
+  function showResult(value, format) { els.result.textContent=value; els.result.classList.add('has-value'); els.type.textContent=format; els.type.classList.remove('type-flash'); void els.type.offsetWidth; els.type.classList.add('type-flash'); els.copy.disabled=false; els.copyFeedback.textContent=''; }
   function setStatus(message) { els.status.textContent=message; }
   function renderHistory() {
     els.list.replaceChildren(); els.count.textContent=String(history.length); els.empty.classList.toggle('hidden',history.length>0); els.export.disabled=history.length===0; els.clear.disabled=history.length===0;
@@ -53,7 +53,8 @@
     if (controls) { try { controls.stop(); } catch {} controls=null; }
     if (els.video.srcObject) { els.video.srcObject.getTracks().forEach(t=>t.stop()); els.video.srcObject=null; }
     scanning=false; els.frame.classList.remove('scanning'); els.live.classList.remove('active'); els.start.classList.remove('hidden'); els.stop.classList.add('hidden');
-    els.liveText.textContent='พร้อมใช้งาน';
+    els.liveText.textContent='รอเริ่มสแกน';
+    els.preScanTip.classList.remove('hidden');
     if(message) setStatus(message);
   }
   function cameraError(error) {
@@ -80,7 +81,7 @@
   }
   async function startCamera() {
     if(scanning)return;
-    els.frame.classList.remove('error','timeout'); els.help.classList.add('hidden'); els.scanHelp.classList.add('hidden'); els.start.disabled=true; els.start.querySelector('span').textContent='กำลังเปิดกล้อง…'; setStatus('กำลังขอสิทธิ์เข้าถึงกล้อง');
+    els.frame.classList.remove('error','timeout'); els.help.classList.add('hidden'); els.scanHelp.classList.add('hidden'); els.preScanTip.classList.add('hidden'); els.start.disabled=true; els.start.querySelector('span').textContent='กำลังเปิดกล้อง…'; setStatus('กำลังขอสิทธิ์เข้าถึงกล้อง');
     els.cameraTitle.textContent='กำลังเปิดกล้อง'; els.cameraMessage.textContent='รอสักครู่';
     try {
       if(location.protocol!=='https:' && location.hostname!=='localhost') { const e=new Error('HTTPS required');e.name='InsecureContextError';throw e; }
@@ -144,5 +145,11 @@
   els.input.addEventListener('input',()=>{els.validation.textContent=checkMode==='verify'?'รองรับเลขเต็ม 8, 12 หรือ 13 หลัก':'ใส่เลขฐาน 7, 11 หรือ 12 หลัก';els.validation.className='validation-message';});
   els.clear.addEventListener('click',()=>{if(!history.length)return;history=[];saveHistory();renderHistory();}); els.export.addEventListener('click',exportCsv);
   window.addEventListener('pagehide',()=>stopCamera(''));
+  document.querySelectorAll('.site-menu').forEach(menu=>{
+    menu.querySelectorAll('[data-menu-page]').forEach(button=>button.addEventListener('click',()=>{
+      menu.querySelector('.menu-notice').textContent=`${button.dataset.menuPage} · อยู่ระหว่างดำเนินการ`;
+    }));
+    document.addEventListener('click',event=>{if(!menu.contains(event.target))menu.open=false;});
+  });
   renderHistory();
 })();
