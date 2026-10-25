@@ -42,8 +42,8 @@
 .about-dialog::-webkit-scrollbar{display:none}
 /* Full-width mobile-first branded hero */
 .brand-logo{display:block;flex:none;width:42px;height:42px;object-fit:contain}
-.hero-band{width:100vw;margin-left:calc(50% - 50vw);background:var(--purple);color:#fff}
-.hero-content{width:min(100%,1000px);margin-left:auto;margin-right:max(20px,calc((100vw - 1200px)/2));padding:18px 12px;display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr);align-items:center;gap:18px}
+.hero-band{position:relative;left:50%;transform:translateX(-50%);width:100vw;margin-left:0;background:var(--purple);color:#fff}
+.hero-content{width:min(100%,1000px);margin:0 auto;padding:18px 12px;display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr);align-items:center;gap:18px}
 .hero-illustration{display:block;width:min(100%,300px);height:auto;justify-self:center;object-fit:contain}
 .hero-copy{min-width:0}
 .hero-copy .eyebrow{margin:0 0 10px;color:#fff;font-size:15px;letter-spacing:0}
