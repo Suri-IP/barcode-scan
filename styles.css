@@ -40,3 +40,25 @@
 .about-dialog{width:min(560px,calc(100% - 28px));max-height:min(86dvh,760px);border-radius:12px;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;padding:27px 24px 20px;text-align:left}.about-dialog h2{margin:0 0 14px;font-size:24px}.about-dialog h3{margin:18px 0 8px;color:var(--purple);font:400 17px 'Chonburi','IBM Plex Sans Thai',serif}.about-dialog p{margin:0 0 13px;color:#5c596c;font-size:14px;line-height:1.85}.about-dialog hr{height:1px;margin:17px 0;border:0;background:var(--line)}.company-website-link{display:inline-flex;align-items:center;gap:7px;margin-top:0;padding:10px 13px;border-radius:7px;background:#DBFB37;color:#292d13;font:600 14px 'IBM Plex Sans Thai',sans-serif;text-decoration:none}.company-website-link:hover,.company-website-link:focus-visible{background:#c7e52d;text-decoration:underline;text-underline-offset:3px}.company-website-link span{font-family:Manrope,sans-serif}.about-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:18px}.about-actions button{min-width:90px;min-height:42px;border-radius:8px;font:600 14px 'IBM Plex Sans Thai',sans-serif;cursor:pointer}
 
 .about-dialog::-webkit-scrollbar{display:none}
+/* Full-width mobile-first branded hero */
+.brand-logo{display:block;flex:none;width:42px;height:42px;object-fit:contain}
+.hero-band{width:100vw;margin-left:calc(50% - 50vw);background:var(--purple);color:#fff}
+.hero-content{width:min(100%,1000px);margin-left:auto;margin-right:max(20px,calc((100vw - 1200px)/2));padding:18px 12px;display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr);align-items:center;gap:18px}
+.hero-illustration{display:block;width:min(100%,300px);height:auto;justify-self:center;object-fit:contain}
+.hero-copy{min-width:0}
+.hero-copy .eyebrow{margin:0 0 10px;color:#fff;font-size:15px;letter-spacing:0}
+.hero-copy h1,.hero-copy h1 span{color:#fff}
+.hero-copy h1{font-family:'Chonburi','IBM Plex Sans Thai',serif;font-size:clamp(30px,3.4vw,42px);font-weight:400;line-height:1.4;letter-spacing:0}
+.intro-copy{margin-top:14px}
+@media(max-width:700px){.hero-content{width:100%;margin:0;padding:16px 12px;grid-template-columns:minmax(105px,.78fr) minmax(0,1.22fr);gap:8px}.hero-illustration{width:100%;max-width:155px}.hero-copy .eyebrow{font-size:12px;line-height:1.6;margin-bottom:6px}.hero-copy h1{font-size:clamp(21px,6vw,27px);line-height:1.48}.intro-copy{margin-top:14px}}
+@media(max-width:360px){.hero-content{padding-right:10px;padding-left:10px;grid-template-columns:minmax(95px,.72fr) minmax(0,1.28fr);gap:7px}.hero-copy .eyebrow{font-size:11px}.hero-copy h1{font-size:21px}}/* Brand and scanner controls */
+.brand-name{display:flex;gap:0}.brand-chuai{color:#5A46AA;font-weight:800}.brand-scan{color:#212033;font-weight:700}
+.camera-placeholder{gap:12px;padding:18px}
+.camera-placeholder .primary-button{width:min(86%,360px);height:60px;flex:none;border-radius:9px}
+.camera-placeholder .primary-button span{max-width:none;text-align:center;line-height:1.2;font-size:inherit}
+.camera-placeholder #cameraMessage{max-width:100%}
+.camera-corner{display:none}
+.camera-frame.scanning .camera-corner{display:block}/* Tighten the top edge of the hero and enlarge the scan button icon */
+.layout{margin-top:0}
+.intro{padding-top:0}
+.camera-placeholder .primary-button svg{width:34px;height:34px;flex:none}

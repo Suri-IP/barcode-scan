@@ -14,23 +14,30 @@
   <meta name="theme-color" content="#5A46AA">
   <meta name="description" content="สแกนบาร์โค้ดได้ง่าย รวดเร็ว และเป็นส่วนตัว โดย barcodetech (1999)">
   <title>ChuaiScan by Barcode Tech</title>
-  <link rel="stylesheet" href="styles.css?v=20261024-about-ui">
+  <link rel="stylesheet" href="styles.css?v=20261025-hero-spacing">
   <script defer src="https://unpkg.com/@zxing/browser@0.1.5"></script>
-  <script defer src="app.js?v=20261024-about-ui"></script>
+  <script defer src="app.js?v=20261025-hero-spacing"></script>
 </head>
 <body>
   <header class="topbar">
     <a class="brand" href="#top" aria-label="barcodetech home">
-      <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i><span>ช</span></span>
-      <span><strong>ChuaiScan</strong><small>by Barcode Tech (1999)</small></span>
+      <img class="brand-logo" src="Logo-Chaui.svg" alt="">
+      <span><strong class="brand-name"><span class="brand-chuai">Chuai</span><span class="brand-scan">Scan</span></strong><small>by Barcode Tech (1999)</small></span>
     </a>
     <details class="site-menu"><summary class="menu-toggle" aria-label="เปิดเมนู" aria-haspopup="true"><i></i><i></i><i></i></summary><div class="menu-panel"><button type="button" data-menu-page="เกี่ยวกับเรา">เกี่ยวกับเรา</button><button type="button" data-menu-page="ติดต่อเรา">ติดต่อเรา</button><p class="menu-notice" aria-live="polite"></p></div></details>
   </header>
 
   <main id="top" class="layout">
     <section class="intro" aria-labelledby="page-title">
-      <p class="eyebrow">คุณพระไม่ช่วย ให้เราช่วยเอง</p>
-      <h1 id="page-title">สแกนบาร์โค้ด<br><span>ได้ทันทีบนมือถือ</span></h1>
+      <div class="hero-band">
+        <div class="hero-content">
+          <img class="hero-illustration" src="Scan-Barcode-Men.png" alt="ภาพประกอบการใช้โทรศัพท์สแกนบาร์โค้ด">
+          <div class="hero-copy">
+            <p class="eyebrow">คุณพระไม่ช่วย ให้เราช่วยเอง</p>
+            <h1 id="page-title">สแกนบาร์โค้ด<br><span>ได้ทันทีบนมือถือ</span></h1>
+          </div>
+        </div>
+      </div>
       <p class="intro-copy">ใช้กล้องมือถือหรืออุปกรณ์ของคุณอ่านบาร์โค้ดง่ายๆ</p>
       <p class="format-caption">รองรับเฉพาะบาร์โค้ด 4 รูปแบบนี้</p>
       <div class="formats" aria-label="รองรับเฉพาะ EAN-13, EAN-8, UPC-A และ Code 128">
@@ -43,7 +50,7 @@
       <div class="camera-frame" id="cameraFrame">
         <video id="video" muted playsinline aria-label="ภาพจากกล้องสำหรับสแกนบาร์โค้ด"></video>
         <div class="camera-placeholder" id="cameraPlaceholder">
-          <div class="camera-icon" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M8 17h7l3-5h12l3 5h7v21H8z"/><circle cx="24" cy="27" r="7"/></svg></div>
+          <button class="primary-button" id="startButton" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 7.5h3.2l1.5-2.4h3.6l1.5 2.4h3.2c.8 0 1.5.7 1.5 1.5v8.5c0 .8-.7 1.5-1.5 1.5h-13c-.8 0-1.5-.7-1.5-1.5V9c0-.8.7-1.5 1.5-1.5Z"/><circle cx="12" cy="13" r="3.5"/></svg><span>เริ่มสแกน</span></button>
           <strong id="cameraTitle" class="sr-only"></strong>
           <span id="cameraMessage"><strong>กรุณากด “อนุญาต” เพื่อเปิดการใช้งานกล้องของคุณ</strong><span class="camera-idle-note">กล้องจะทำงานเมื่อคุณกดเริ่มสแกนเท่านั้น</span></span>
         </div>
@@ -60,7 +67,6 @@
         <summary>เคล็ดลับให้กล้องอ่านได้ง่ายขึ้น</summary>
         <div>เพิ่มแสงให้บาร์โค้ด ถือโทรศัพท์ให้นิ่งและขนานกับฉลาก ขยับเข้าออกเล็กน้อยให้เส้นคมชัด และจัดบาร์โค้ดให้อยู่กลางกรอบ หากฉลากยับหรือสะท้อนแสง ให้ลองเปลี่ยนมุม</div>
       </details>
-      <button class="primary-button" id="startButton" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h4l2-3h4l2 3h4v12H4z"/><circle cx="12" cy="13" r="3.5"/></svg><span>เริ่มสแกน</span></button>
       <button class="stop-button hidden" id="stopButton" type="button">หยุดกล้อง</button>
     </section>
 
